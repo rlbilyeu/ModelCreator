@@ -1,8 +1,6 @@
 package com.mrcrayfish.modelcreator.panels;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -24,17 +22,17 @@ public class GlobalPanel extends JPanel implements IValueUpdater
 	private JRadioButton ambientOcc;
 	private JButton btnParticle;
 
-	public GlobalPanel(ElementManager manager)
+	public GlobalPanel(ElementManager manager, Frame frame)
 	{
 		this.manager = manager;
 		setLayout(new GridLayout(2, 1, 0, 5));
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(221, 221, 228), 5), "<html><b>Global Properties</b></html>"));
 		setMaximumSize(new Dimension(186, 80));
-		initComponents();
+		initComponents(frame);
 		addComponents();
 	}
 
-	public void initComponents()
+	public void initComponents(Frame frame)
 	{
 		ambientOcc = ComponentUtil.createRadioButton("Ambient Occulusion", "Determine the light for each element");
 		ambientOcc.setSelected(true);
@@ -44,7 +42,7 @@ public class GlobalPanel extends JPanel implements IValueUpdater
 		btnParticle.setIcon(Icons.texture);
 		btnParticle.addActionListener(a ->
 		{
-			String texture = TextureManager.display(manager);
+			String texture = TextureManager.display(manager, frame);
 			if (texture != null)
 			{
 				manager.setParticle(texture);

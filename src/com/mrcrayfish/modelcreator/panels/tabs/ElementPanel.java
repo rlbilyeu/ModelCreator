@@ -1,6 +1,6 @@
 package com.mrcrayfish.modelcreator.panels.tabs;
 
-import java.awt.Dimension;
+import java.awt.*;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -26,20 +26,20 @@ public class ElementPanel extends JPanel implements IValueUpdater
 	private ElementExtraPanel panelExtras;
 	private GlobalPanel panelGlobal;
 
-	public ElementPanel(ElementManager manager)
+	public ElementPanel(ElementManager manager, Frame frame)
 	{
 		this.manager = manager;
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		initComponents();
+		initComponents(frame);
 		addComponents();
 	}
 
-	public void initComponents()
+	public void initComponents(Frame frame)
 	{
 		panelSize = new SizePanel(manager);
 		panelPosition = new PositionPanel(manager);
 		panelExtras = new ElementExtraPanel(manager);
-		panelGlobal = new GlobalPanel(manager);
+		panelGlobal = new GlobalPanel(manager, frame);
 	}
 
 	public void addComponents()

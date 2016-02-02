@@ -1,9 +1,6 @@
 package com.mrcrayfish.modelcreator.panels;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -51,16 +48,16 @@ public class SidebarPanel extends JPanel implements ElementManager
 	private String particleLocation = null;
 	private boolean ambientOcc = true;
 
-	public SidebarPanel(ModelCreator creator)
+	public SidebarPanel(ModelCreator creator, Frame frame)
 	{
 		this.creator = creator;
 		setLayout(layout = new SpringLayout());
 		setPreferredSize(new Dimension(200, 760));
-		initComponents();
+		initComponents(frame);
 		setLayoutConstaints();
 	}
 
-	public void initComponents()
+	public void initComponents(Frame frame)
 	{
 		Font defaultFont = new Font("SansSerif", Font.BOLD, 14);
 
@@ -152,9 +149,9 @@ public class SidebarPanel extends JPanel implements ElementManager
 
 		tabbedPane.setBackground(new Color(127, 132, 145));
 		tabbedPane.setForeground(Color.WHITE);
-		tabbedPane.add("Element", new ElementPanel(this));
+		tabbedPane.add("Element", new ElementPanel(this, frame));
 		tabbedPane.add("Rotation", new RotationPanel(this));
-		tabbedPane.add("Faces", new FacePanel(this));
+		tabbedPane.add("Faces", new FacePanel(this, frame));
 		tabbedPane.setPreferredSize(new Dimension(190, 500));
 		tabbedPane.setTabPlacement(JTabbedPane.TOP);
 		tabbedPane.addChangeListener(c ->

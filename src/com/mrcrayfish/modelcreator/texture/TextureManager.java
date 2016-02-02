@@ -2,7 +2,6 @@ package com.mrcrayfish.modelcreator.texture;
 
 import com.mrcrayfish.modelcreator.ModelCreator;
 import com.mrcrayfish.modelcreator.element.ElementManager;
-import com.mrcrayfish.modelcreator.panels.SidebarPanel;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.BufferedImageUtil;
@@ -156,7 +155,7 @@ public class TextureManager
 
 	private static String texture = null;
 
-	public static String display(ElementManager manager)
+	public static String display(ElementManager manager, Frame frame)
 	{
 		Font defaultFont = new Font("SansSerif", Font.BOLD, 18);
 
@@ -257,16 +256,17 @@ public class TextureManager
 		panel.add(btnClose);
 
 //TODO FIX
-//		JDialog dialog = new JDialog(((SidebarPanel) manager).getCreator(), "Texture Manager", false);
-//		dialog.setLayout(new BorderLayout());
-//		dialog.setResizable(false);
-//		dialog.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
-//		dialog.setPreferredSize(new Dimension(540, 480));
-//		dialog.add(scroll, BorderLayout.CENTER);
-//		dialog.add(panel, BorderLayout.SOUTH);
-//		dialog.pack();
-//		dialog.setLocationRelativeTo(null);
-//		dialog.setVisible(true);
+
+		JDialog dialog = new JDialog(frame   , "Texture Manager", false);
+		dialog.setLayout(new BorderLayout());
+		dialog.setResizable(false);
+		dialog.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
+		dialog.setPreferredSize(new Dimension(540, 480));
+		dialog.add(scroll, BorderLayout.CENTER);
+		dialog.add(panel, BorderLayout.SOUTH);
+		dialog.pack();
+		dialog.setLocationRelativeTo(null);
+		dialog.setVisible(true);
 
 		return texture;
 	}

@@ -1,8 +1,6 @@
 package com.mrcrayfish.modelcreator.panels.tabs;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -47,19 +45,19 @@ public class FacePanel extends JPanel implements IValueUpdater
 	private FaceExtrasPanel propertiesPanel;
 
 
-	public FacePanel(ElementManager manager)
+	public FacePanel(ElementManager manager, Frame frame)
 	{
 		this.manager = manager;
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		initComponents();
+		initComponents(frame);
 		addComponents();
 	}
 
 
-	public void initComponents()
+	public void initComponents(Frame frame)
 	{
 		makeSidesPanel();
-		texturePanel = new TexturePanel(manager);
+		texturePanel = new TexturePanel(manager, frame);
 		uvPanel = new UVPanel(manager);
 		makeRotationPanel();
 		makeModIdPanel();

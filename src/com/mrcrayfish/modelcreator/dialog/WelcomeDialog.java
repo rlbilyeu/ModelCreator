@@ -22,19 +22,20 @@ import com.mrcrayfish.modelcreator.Icons;
 
 public class WelcomeDialog
 {
-	public static void show(JFrame parent)
+
+	public static void show(JFrame parent, URL stickerUrl)
 	{
-		JPanel dialogContent = getDialogContent(parent);
+		JPanel dialogContent = getDialogContent(parent, stickerUrl);
 		JDialog welcomeDialog = getWelcomeDialog(parent, dialogContent);
 		showDialog(welcomeDialog);
 	}
 
-	private static JPanel getDialogContent(JFrame parent)
+	private static JPanel getDialogContent(JFrame parent, URL stickerUrl)
 	{
 		JPanel container = new JPanel(new BorderLayout(20, 10));
 		container.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-		URL stickerUrl = parent.getClass().getClassLoader().getResource("sticker.png");
+// 		stickerUrl = parent.getClass().getClassLoader().getResource("sticker.png");
 		if (stickerUrl != null)
 		{
 			ImageIcon crayfish = new ImageIcon(stickerUrl);

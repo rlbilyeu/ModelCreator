@@ -1,9 +1,6 @@
 package com.mrcrayfish.modelcreator.panels;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 import javax.swing.BorderFactory;
@@ -29,17 +26,17 @@ public class TexturePanel extends JPanel implements TextureCallback
 	private JButton btnCopy;
 	private JButton btnPaste;
 
-	public TexturePanel(ElementManager manager)
+	public TexturePanel(ElementManager manager, Frame frame)
 	{
 		this.manager = manager;
 		setLayout(new GridLayout(2, 2, 4, 4));
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(221, 221, 228), 5), "<html><b>Texture</b></html>"));
 		setMaximumSize(new Dimension(186, 90));
-		initComponents();
+		initComponents(frame);
 		addComponents();
 	}
 
-	public void initComponents()
+	public void initComponents(Frame frame)
 	{
 		Font defaultFont = new Font("SansSerif", Font.BOLD, 14);
 
@@ -49,7 +46,7 @@ public class TexturePanel extends JPanel implements TextureCallback
 		{
 			if (manager.getSelectedElement() != null)
 			{
-				String texture = TextureManager.display(manager);
+				String texture = TextureManager.display(manager, frame);
 				if (texture != null)
 				{
 					manager.getSelectedElement().getSelectedFace().setTexture(texture);

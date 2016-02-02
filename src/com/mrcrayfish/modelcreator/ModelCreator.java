@@ -38,6 +38,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -146,13 +147,15 @@ public class ModelCreator
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 
+		URL stickerUrl = this.getClass().getClassLoader().getResource("sticker.png");
+
 		initDisplay();
 
 		try
 		{
 			Display.create();
 
-			WelcomeDialog.show(frame);
+			WelcomeDialog.show(frame, stickerUrl);
 
 			loop(frame);
 
@@ -171,7 +174,8 @@ public class ModelCreator
 		frame.setMinimumSize(new Dimension(1200, 500));
 		frame.setLayout(new BorderLayout(10, 0));
 		frame.setIconImages(getIcons());
-		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+//		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
 	public void initComponents(JFrame frame)
@@ -186,7 +190,7 @@ public class ModelCreator
 		canvas.setVisible(true);
 		canvas.requestFocus();
 
-		manager = new SidebarPanel(this);
+		manager = new SidebarPanel(this, frame);
 		scroll = new JScrollPane((JPanel) manager);
 		scroll.setBorder(BorderFactory.createEmptyBorder());
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -207,8 +211,7 @@ public class ModelCreator
 	private void setupMenuBar(JFrame frame)
 	{
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-//TODO fix menu
-//		frame.setJMenuBar(new Menu(this));
+		frame.setJMenuBar(new Menu(frame, manager, this));
 	}
 
 	public void initDisplay()
@@ -450,8 +453,8 @@ public class ModelCreator
 					int newMouseX = Mouse.getX();
 					int newMouseY = Mouse.getY();
 
-					int xMovement = (int) ((newMouseX - lastMouseX) / 20);
-					int yMovement = (int) ((newMouseY - lastMouseY) / 20);
+					int xMovement = ((newMouseX - lastMouseX) / 20);
+					int yMovement = ((newMouseY - lastMouseY) / 20);
 
 					if (xMovement != 0 | yMovement != 0)
 					{
@@ -551,15 +554,15 @@ public class ModelCreator
 				if (Mouse.isButtonDown(0))
 				{
 					final float modifier = (cameraMod * 0.05f);
-					camera.addX((float) (Mouse.getDX() * 0.01F) * modifier);
-					camera.addY((float) (Mouse.getDY() * 0.01F) * modifier);
+					camera.addX(Mouse.getDX() * 0.01F * modifier);
+					camera.addY(Mouse.getDY() * 0.01F * modifier);
 				}
 				else if (Mouse.isButtonDown(1))
 				{
 					final float modifier = applyLimit(cameraMod * 0.1f);
-					camera.rotateX(-(float) (Mouse.getDY() * 0.5F) * modifier);
+					camera.rotateX(-(Mouse.getDY() * 0.5F) * modifier);
 					final float rxAbs = Math.abs(camera.getRX());
-					camera.rotateY((rxAbs >= 90 && rxAbs < 270 ? -1 : 1) * (float) (Mouse.getDX() * 0.5F) * modifier);
+					camera.rotateY((rxAbs >= 90 && rxAbs < 270 ? -1 : 1) * Mouse.getDX() * 0.5F * modifier);
 				}
 
 				final float wheel = Mouse.getDWheel();
