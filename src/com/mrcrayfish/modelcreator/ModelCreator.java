@@ -43,14 +43,12 @@ import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
+import javax.swing.*;
 
+import com.jtattoo.plaf.fast.FastLookAndFeel;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -70,9 +68,11 @@ import com.mrcrayfish.modelcreator.sidebar.UVSidebar;
 import com.mrcrayfish.modelcreator.texture.PendingTexture;
 import com.mrcrayfish.modelcreator.util.FontManager;
 
-public class ModelCreator extends JFrame
+public class ModelCreator
 {
 	private static final long serialVersionUID = 1L;
+
+
 
 	// TODO remove static instance
 	public static String texturePath = ".";
@@ -104,17 +104,12 @@ public class ModelCreator extends JFrame
 
 	public ModelCreator(String title)
 	{
-		super(title);
-
-		setPreferredSize(new Dimension(1200, 815));
-		setMinimumSize(new Dimension(1200, 500));
-		setLayout(new BorderLayout(10, 0));
-		setIconImages(getIcons());
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		JFrame frame = new JFrame(title);
+		initWindowFrame(frame);
 
 		canvas = new Canvas();
 
-		initComponents();
+		initComponents(frame);
 
 		uvSidebar = new UVSidebar("UV Editor", manager);
 
@@ -127,7 +122,7 @@ public class ModelCreator extends JFrame
 			}
 		});
 
-		addWindowFocusListener(new WindowAdapter()
+		frame.addWindowFocusListener(new WindowAdapter()
 		{
 			@Override
 			public void windowGainedFocus(WindowEvent e)
@@ -136,7 +131,7 @@ public class ModelCreator extends JFrame
 			}
 		});
 
-		addWindowListener(new WindowAdapter()
+		frame.addWindowListener(new WindowAdapter()
 		{
 			@Override
 			public void windowClosing(WindowEvent e)
@@ -147,9 +142,9 @@ public class ModelCreator extends JFrame
 
 		manager.updateValues();
 
-		pack();
-		setVisible(true);
-		setLocationRelativeTo(null);
+		frame.pack();
+		frame.setVisible(true);
+		frame.setLocationRelativeTo(null);
 
 		initDisplay();
 
@@ -157,12 +152,12 @@ public class ModelCreator extends JFrame
 		{
 			Display.create();
 
-			WelcomeDialog.show(ModelCreator.this);
+			WelcomeDialog.show(frame);
 
-			loop();
+			loop(frame);
 
 			Display.destroy();
-			dispose();
+			frame.dispose();
 			System.exit(0);
 		}
 		catch (LWJGLException e1)
@@ -171,13 +166,21 @@ public class ModelCreator extends JFrame
 		}
 	}
 
-	public void initComponents()
+	private void initWindowFrame(JFrame frame) {
+		frame.setPreferredSize(new Dimension(1200, 815));
+		frame.setMinimumSize(new Dimension(1200, 500));
+		frame.setLayout(new BorderLayout(10, 0));
+		frame.setIconImages(getIcons());
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+	}
+
+	public void initComponents(JFrame frame)
 	{
 		Icons.init(getClass());
-		setupMenuBar();
+		setupMenuBar(frame);
 
 		canvas.setPreferredSize(new Dimension(1000, 790));
-		add(canvas, BorderLayout.CENTER);
+		frame.add(canvas, BorderLayout.CENTER);
 
 		canvas.setFocusable(true);
 		canvas.setVisible(true);
@@ -188,7 +191,7 @@ public class ModelCreator extends JFrame
 		scroll.setBorder(BorderFactory.createEmptyBorder());
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		add(scroll, BorderLayout.EAST);
+		frame.add(scroll, BorderLayout.EAST);
 	}
 
 	private List<Image> getIcons()
@@ -201,10 +204,11 @@ public class ModelCreator extends JFrame
 		return icons;
 	}
 
-	private void setupMenuBar()
+	private void setupMenuBar(JFrame frame)
 	{
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-		setJMenuBar(new Menu(this));
+//TODO fix menu
+//		frame.setJMenuBar(new Menu(this));
 	}
 
 	public void initDisplay()
@@ -221,7 +225,7 @@ public class ModelCreator extends JFrame
 		}
 	}
 
-	private void loop() throws LWJGLException
+	private void loop(JFrame frame) throws LWJGLException
 	{
 		camera = new Camera(60F, (float) Display.getWidth() / (float) Display.getHeight(), 0.3F, 1000F);
 
@@ -243,11 +247,11 @@ public class ModelCreator extends JFrame
 				height = newDim.height;
 			}
 
-			int offset = activeSidebar == null ? 0 : getHeight() < 805 ? SIDEBAR_WIDTH * 2 : SIDEBAR_WIDTH;
+			int offset = activeSidebar == null ? 0 : frame.getHeight() < 805 ? SIDEBAR_WIDTH * 2 : SIDEBAR_WIDTH;
 
 			glViewport(offset, 0, width - offset, height);
 
-			handleInput(offset);
+			handleInput(offset, frame);
 
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
@@ -267,7 +271,7 @@ public class ModelCreator extends JFrame
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
 
-			drawOverlay(offset);
+			drawOverlay(offset, frame);
 
 			Display.update();
 
@@ -329,7 +333,7 @@ public class ModelCreator extends JFrame
 		GL11.glPopMatrix();
 	}
 
-	public void drawOverlay(int offset)
+	public void drawOverlay(int offset, JFrame frame)
 	{
 		glPushMatrix();
 		{
@@ -351,7 +355,7 @@ public class ModelCreator extends JFrame
 		glPopMatrix();
 
 		if (activeSidebar != null)
-			activeSidebar.draw(offset, width, height, getHeight());
+			activeSidebar.draw(offset, width, height, frame.getHeight());
 
 		glPushMatrix();
 		{
@@ -398,7 +402,7 @@ public class ModelCreator extends JFrame
 		glPopMatrix();
 	}
 
-	public void handleInput(int offset)
+	public void handleInput(int offset, JFrame frame)
 	{
 		final float cameraMod = Math.abs(camera.getZ());
 
@@ -419,7 +423,7 @@ public class ModelCreator extends JFrame
 
 		if (Mouse.getX() < offset)
 		{
-			activeSidebar.handleInput(getHeight());
+			activeSidebar.handleInput(frame.getHeight());
 		}
 		else
 		{
@@ -715,4 +719,51 @@ public class ModelCreator extends JFrame
 	{
 		return closeRequested;
 	}
+
+
+	public static void main(String[] args)
+	{
+		try
+		{
+			checkJVMversion();
+			setupUI();
+			new ModelCreator("Model Creator - pre4");
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private static void checkJVMversion()
+	{
+		Double version = Double.parseDouble(System.getProperty("java.specification.version"));
+		if (version < 1.8)
+			throw new IllegalStateException("You need Java 1.8 or higher to run this program.");
+	}
+
+	private static void setupUI() throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+		System.setProperty("org.lwjgl.util.Debug", "true");
+		UIManager.setLookAndFeel("com.jtattoo.plaf.fast.FastLookAndFeel");
+		Properties properties = getThemeProperties();
+		FastLookAndFeel.setTheme(properties);
+	}
+
+	private static Properties getThemeProperties() {
+		Properties p = new Properties();
+		p.put("logoString", "");
+		p.put("centerWindowTitle", "on");
+		p.put("buttonBackgroundColor", "127 132 145");
+		p.put("buttonForegroundColor", "255 255 255");
+		p.put("windowTitleBackgroundColor", "97 102 115");
+		p.put("windowTitleForegroundColor", "255 255 255");
+		p.put("backgroundColor", "221 221 228");
+		p.put("menuBackgroundColor", "221 221 228");
+		p.put("controlForegroundColor", "120 120 120");
+		p.put("windowBorderColor", "97 102 110");
+		return p;
+	}
+
+
+
 }

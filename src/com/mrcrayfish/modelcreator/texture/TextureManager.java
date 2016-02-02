@@ -256,16 +256,17 @@ public class TextureManager
 		btnClose.setFont(defaultFont);
 		panel.add(btnClose);
 
-		JDialog dialog = new JDialog(((SidebarPanel) manager).getCreator(), "Texture Manager", false);
-		dialog.setLayout(new BorderLayout());
-		dialog.setResizable(false);
-		dialog.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
-		dialog.setPreferredSize(new Dimension(540, 480));
-		dialog.add(scroll, BorderLayout.CENTER);
-		dialog.add(panel, BorderLayout.SOUTH);
-		dialog.pack();
-		dialog.setLocationRelativeTo(null);
-		dialog.setVisible(true);
+//TODO FIX
+//		JDialog dialog = new JDialog(((SidebarPanel) manager).getCreator(), "Texture Manager", false);
+//		dialog.setLayout(new BorderLayout());
+//		dialog.setResizable(false);
+//		dialog.setModalityType(Dialog.DEFAULT_MODALITY_TYPE);
+//		dialog.setPreferredSize(new Dimension(540, 480));
+//		dialog.add(scroll, BorderLayout.CENTER);
+//		dialog.add(panel, BorderLayout.SOUTH);
+//		dialog.pack();
+//		dialog.setLocationRelativeTo(null);
+//		dialog.setVisible(true);
 
 		return texture;
 	}
