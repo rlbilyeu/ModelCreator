@@ -105,8 +105,6 @@ public class ModelCreator
 	public static Sidebar activeSidebar = null;
 	public static Sidebar uvSidebar;
 
-	public ModelCreator(String title)
-	{ }
 
 
 	public static void main(String[] args)
