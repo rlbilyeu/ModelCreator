@@ -15,6 +15,7 @@ import com.mrcrayfish.modelcreator.screenshot.ScreenshotCallback;
 import com.mrcrayfish.modelcreator.screenshot.Uploader;
 import com.mrcrayfish.modelcreator.sidebar.Sidebar;
 import com.mrcrayfish.modelcreator.util.Util;
+import com.sun.tools.internal.ws.processor.model.Model;
 
 public class Menu extends JMenuBar
 {
@@ -54,13 +55,13 @@ public class Menu extends JMenuBar
 	private JMenuItem itemMF;
 	private JMenuItem itemGitHub;
 
-	public Menu(JFrame creator, ElementManager manager, ModelCreator modelcreator)
+	public Menu(JFrame creator, ElementManager manager)
 	{
 		this.creator = creator;
-		initMenu(manager, modelcreator);
+		initMenu(manager);
 	}
 
-	private void initMenu(ElementManager manager, ModelCreator modelcreator)
+	private void initMenu(ElementManager manager)
 	{
 		menuFile = new JMenu("File");
 		{
@@ -101,7 +102,7 @@ public class Menu extends JMenuBar
 			itemGitHub = createItem("Github", "View Source Code", KeyEvent.VK_G, Icons.github);
 		}
 
-		initActions(manager, modelcreator);
+		initActions(manager);
 
 		menuExamples.add(itemModelCauldron);
 		menuExamples.add(itemModelChair);
@@ -140,7 +141,7 @@ public class Menu extends JMenuBar
 		add(menuHelp);
 	}
 
-	private void initActions(ElementManager manager, ModelCreator modelcreator)
+	private void initActions(ElementManager manager)
 	{
 		itemNew.addActionListener(a ->
 		{
@@ -304,16 +305,16 @@ public class Menu extends JMenuBar
 					String filePath = chooser.getSelectedFile().getAbsolutePath();
 					if (!filePath.endsWith(".png"))
 						chooser.setSelectedFile(new File(filePath + ".png"));
-					modelcreator.setSidebar(null);
-					modelcreator.startScreenshot(new PendingScreenshot(chooser.getSelectedFile(), null));
+					ModelCreator.setSidebar(null);
+					ModelCreator.startScreenshot(new PendingScreenshot(chooser.getSelectedFile(), null));
 				}
 			}
 		});
 
 		itemShareFacebook.addActionListener(a ->
 		{
-			modelcreator.setSidebar(null);
-			modelcreator.startScreenshot(new PendingScreenshot(null, new ScreenshotCallback()
+			ModelCreator.setSidebar(null);
+			ModelCreator.startScreenshot(new PendingScreenshot(null, new ScreenshotCallback()
 			{
 				@Override
 				public void callback(File file)
@@ -333,8 +334,8 @@ public class Menu extends JMenuBar
 
 		itemShareTwitter.addActionListener(a ->
 		{
-			modelcreator.setSidebar(null);
-			modelcreator.startScreenshot(new PendingScreenshot(null, new ScreenshotCallback()
+			ModelCreator.setSidebar(null);
+			ModelCreator.startScreenshot(new PendingScreenshot(null, new ScreenshotCallback()
 			{
 				@Override
 				public void callback(File file)
@@ -354,8 +355,8 @@ public class Menu extends JMenuBar
 
 		itemShareReddit.addActionListener(a ->
 		{
-			modelcreator.setSidebar(null);
-			modelcreator.startScreenshot(new PendingScreenshot(null, new ScreenshotCallback()
+			ModelCreator.setSidebar(null);
+			ModelCreator.startScreenshot(new PendingScreenshot(null, new ScreenshotCallback()
 			{
 				@Override
 				public void callback(File file)
@@ -375,8 +376,8 @@ public class Menu extends JMenuBar
 
 		itemImgurLink.addActionListener(a ->
 		{
-			modelcreator.setSidebar(null);
-			modelcreator.startScreenshot(new PendingScreenshot(null, new ScreenshotCallback()
+			ModelCreator.setSidebar(null);
+			ModelCreator.startScreenshot(new PendingScreenshot(null, new ScreenshotCallback()
 			{
 				@Override
 				public void callback(File file)

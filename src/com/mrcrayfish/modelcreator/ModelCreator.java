@@ -81,34 +81,95 @@ public class ModelCreator
 
 	// Canvas Variables
 	private final static AtomicReference<Dimension> newCanvasSize = new AtomicReference<Dimension>();
-	private final Canvas canvas;
-	private int width = 990, height = 800;
+	private static final Canvas canvas = new Canvas();
+	private static int width = 990;
+	private static int height = 800;
 
 	// Swing Components
-	private JScrollPane scroll;
-	private Camera camera;
-	private ElementManager manager;
-	private Element grabbed = null;
+	private static JScrollPane scroll;
+	private static Camera camera;
+	private static ElementManager manager;
+	private static Element grabbed = null;
 
 	// Texture Loading Cache
-	public List<PendingTexture> pendingTextures = new ArrayList<PendingTexture>();
-	private PendingScreenshot screenshot = null;
+	public static List<PendingTexture> pendingTextures = new ArrayList<PendingTexture>();
+	private static PendingScreenshot screenshot = null;
 
-	private int lastMouseX, lastMouseY;
-	private boolean grabbing = false;
-	private boolean closeRequested = false;
+	private static int lastMouseX;
+	private static int lastMouseY;
+	private static boolean grabbing = false;
+	private static boolean closeRequested = false;
 
 	/* Sidebar Variables */
-	private final int SIDEBAR_WIDTH = 130;
-	public Sidebar activeSidebar = null;
+	private static final int SIDEBAR_WIDTH = 130;
+	public static Sidebar activeSidebar = null;
 	public static Sidebar uvSidebar;
 
 	public ModelCreator(String title)
+	{ }
+
+
+	public static void main(String[] args)
+	{
+		try
+		{
+			checkJVMversion();
+			setupUI();
+
+			doAllTheThings("Model Creator - pre4");
+//			javax.swing.SwingUtilities.invokeLater(() -> {
+//						doAllTheThings("Model Creator - pre4");
+//					}
+//			);
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+	}
+
+	private static void checkJVMversion()
+	{
+		Double version = Double.parseDouble(System.getProperty("java.specification.version"));
+		if (version < 1.8)
+			throw new IllegalStateException("You need Java 1.8 or higher to run this program.");
+	}
+
+	private static void setupUI() throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+		System.setProperty("org.lwjgl.util.Debug", "true");
+		UIManager.setLookAndFeel("com.jtattoo.plaf.fast.FastLookAndFeel");
+		Properties properties = getThemeProperties();
+		FastLookAndFeel.setTheme(properties);
+	}
+
+	private static Properties getThemeProperties() {
+		Properties p = new Properties();
+		p.put("logoString", "");
+		p.put("centerWindowTitle", "on");
+		p.put("buttonBackgroundColor", "127 132 145");
+		p.put("buttonForegroundColor", "255 255 255");
+		p.put("windowTitleBackgroundColor", "97 102 115");
+		p.put("windowTitleForegroundColor", "255 255 255");
+		p.put("backgroundColor", "221 221 228");
+		p.put("menuBackgroundColor", "221 221 228");
+		p.put("controlForegroundColor", "120 120 120");
+		p.put("windowBorderColor", "97 102 110");
+		return p;
+	}
+
+
+
+	private static void doAllTheThings(){
+			doAllTheThings("Model Creator - pre4");
+	}
+
+	private static void doAllTheThings(String title)
 	{
 		JFrame frame = new JFrame(title);
 		initWindowFrame(frame);
 
-		canvas = new Canvas();
 
 		initComponents(frame);
 
@@ -147,7 +208,7 @@ public class ModelCreator
 		frame.setVisible(true);
 		frame.setLocationRelativeTo(null);
 
-		URL stickerUrl = this.getClass().getClassLoader().getResource("sticker.png");
+		URL stickerUrl = ModelCreator.class.getResource("sticker.png");
 
 		initDisplay();
 
@@ -169,7 +230,7 @@ public class ModelCreator
 		}
 	}
 
-	private void initWindowFrame(JFrame frame) {
+	private static void initWindowFrame(JFrame frame) {
 		frame.setPreferredSize(new Dimension(1200, 815));
 		frame.setMinimumSize(new Dimension(1200, 500));
 		frame.setLayout(new BorderLayout(10, 0));
@@ -178,9 +239,9 @@ public class ModelCreator
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
-	public void initComponents(JFrame frame)
+	public static void initComponents(JFrame frame)
 	{
-		Icons.init(getClass());
+		Icons.init(ModelCreator.class);
 		setupMenuBar(frame);
 
 		canvas.setPreferredSize(new Dimension(1000, 790));
@@ -190,7 +251,7 @@ public class ModelCreator
 		canvas.setVisible(true);
 		canvas.requestFocus();
 
-		manager = new SidebarPanel(this, frame);
+		manager = new SidebarPanel(frame);
 		scroll = new JScrollPane((JPanel) manager);
 		scroll.setBorder(BorderFactory.createEmptyBorder());
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -198,7 +259,7 @@ public class ModelCreator
 		frame.add(scroll, BorderLayout.EAST);
 	}
 
-	private List<Image> getIcons()
+	private static List<Image> getIcons()
 	{
 		List<Image> icons = new ArrayList<Image>();
 		icons.add(Toolkit.getDefaultToolkit().getImage("res/icons/set/icon_16x.png"));
@@ -208,13 +269,13 @@ public class ModelCreator
 		return icons;
 	}
 
-	private void setupMenuBar(JFrame frame)
+	private static void setupMenuBar(JFrame frame)
 	{
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-		frame.setJMenuBar(new Menu(frame, manager, this));
+		frame.setJMenuBar(new Menu(frame, manager));
 	}
 
-	public void initDisplay()
+	public static void initDisplay()
 	{
 		try
 		{
@@ -228,7 +289,7 @@ public class ModelCreator
 		}
 	}
 
-	private void loop(JFrame frame) throws LWJGLException
+	private static void loop(JFrame frame) throws LWJGLException
 	{
 		camera = new Camera(60F, (float) Display.getWidth() / (float) Display.getHeight(), 0.3F, 1000F);
 
@@ -289,7 +350,7 @@ public class ModelCreator
 		}
 	}
 
-	public void draw()
+	public static void draw()
 	{
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -301,7 +362,7 @@ public class ModelCreator
 		drawPerspective();
 	}
 
-	public void drawPerspective()
+	public static void drawPerspective()
 	{
 		glClearColor(0.92F, 0.92F, 0.93F, 1.0F);
 		drawGrid();
@@ -336,7 +397,7 @@ public class ModelCreator
 		GL11.glPopMatrix();
 	}
 
-	public void drawOverlay(int offset, JFrame frame)
+	public static void drawOverlay(int offset, JFrame frame)
 	{
 		glPushMatrix();
 		{
@@ -405,7 +466,7 @@ public class ModelCreator
 		glPopMatrix();
 	}
 
-	public void handleInput(int offset, JFrame frame)
+	public static void handleInput(int offset, JFrame frame)
 	{
 		final float cameraMod = Math.abs(camera.getZ());
 
@@ -574,7 +635,7 @@ public class ModelCreator
 		}
 	}
 
-	public int select(int x, int y)
+	public static int select(int x, int y)
 	{
 		IntBuffer selBuffer = ByteBuffer.allocateDirect(1024).order(ByteOrder.nativeOrder()).asIntBuffer();
 		int[] buffer = new int[256];
@@ -626,7 +687,7 @@ public class ModelCreator
 		return -1;
 	}
 
-	public float applyLimit(float value)
+	public static float applyLimit(float value)
 	{
 		if (value > 0.4F)
 		{
@@ -639,7 +700,7 @@ public class ModelCreator
 		return value;
 	}
 
-	public int getCameraState(Camera camera)
+	public static int getCameraState(Camera camera)
 	{
 		int cameraRotY = (int) (camera.getRY() >= 0 ? camera.getRY() : 360 + camera.getRY());
 		int state = (int) ((cameraRotY * 4.0F / 360.0F) + 0.5D) & 3;
@@ -655,7 +716,7 @@ public class ModelCreator
 		return state;
 	}
 
-	public void drawGrid()
+	public static void drawGrid()
 	{
 		glPushMatrix();
 		{
@@ -698,12 +759,12 @@ public class ModelCreator
 		glPopMatrix();
 	}
 
-	public void startScreenshot(PendingScreenshot screenshot)
+	public static void startScreenshot(PendingScreenshot pendingScreenshot)
 	{
-		this.screenshot = screenshot;
+		screenshot = pendingScreenshot;
 	}
 
-	public void setSidebar(Sidebar s)
+	public static void setSidebar(Sidebar s)
 	{
 		activeSidebar = s;
 	}
@@ -715,57 +776,15 @@ public class ModelCreator
 	
 	public void close()
 	{
-		this.closeRequested = true;
+		closeRequested = true;
 	}
 
-	public boolean getCloseRequested()
+	public static boolean getCloseRequested()
 	{
 		return closeRequested;
 	}
 
 
-	public static void main(String[] args)
-	{
-		try
-		{
-			checkJVMversion();
-			setupUI();
-			new ModelCreator("Model Creator - pre4");
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	private static void checkJVMversion()
-	{
-		Double version = Double.parseDouble(System.getProperty("java.specification.version"));
-		if (version < 1.8)
-			throw new IllegalStateException("You need Java 1.8 or higher to run this program.");
-	}
-
-	private static void setupUI() throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
-		System.setProperty("org.lwjgl.util.Debug", "true");
-		UIManager.setLookAndFeel("com.jtattoo.plaf.fast.FastLookAndFeel");
-		Properties properties = getThemeProperties();
-		FastLookAndFeel.setTheme(properties);
-	}
-
-	private static Properties getThemeProperties() {
-		Properties p = new Properties();
-		p.put("logoString", "");
-		p.put("centerWindowTitle", "on");
-		p.put("buttonBackgroundColor", "127 132 145");
-		p.put("buttonForegroundColor", "255 255 255");
-		p.put("windowTitleBackgroundColor", "97 102 115");
-		p.put("windowTitleForegroundColor", "255 255 255");
-		p.put("backgroundColor", "221 221 228");
-		p.put("menuBackgroundColor", "221 221 228");
-		p.put("controlForegroundColor", "120 120 120");
-		p.put("windowBorderColor", "97 102 110");
-		return p;
-	}
 
 
 

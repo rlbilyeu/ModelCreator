@@ -25,6 +25,7 @@ import com.mrcrayfish.modelcreator.panels.tabs.ElementPanel;
 import com.mrcrayfish.modelcreator.panels.tabs.FacePanel;
 import com.mrcrayfish.modelcreator.panels.tabs.RotationPanel;
 import com.mrcrayfish.modelcreator.texture.PendingTexture;
+import com.sun.tools.internal.ws.processor.model.Model;
 
 public class SidebarPanel extends JPanel implements ElementManager
 {
@@ -48,9 +49,8 @@ public class SidebarPanel extends JPanel implements ElementManager
 	private String particleLocation = null;
 	private boolean ambientOcc = true;
 
-	public SidebarPanel(ModelCreator creator, Frame frame)
+	public SidebarPanel(Frame frame)
 	{
-		this.creator = creator;
 		setLayout(layout = new SpringLayout());
 		setPreferredSize(new Dimension(200, 760));
 		initComponents(frame);
@@ -158,11 +158,11 @@ public class SidebarPanel extends JPanel implements ElementManager
 		{
 			if (tabbedPane.getSelectedIndex() == 2)
 			{
-				creator.setSidebar(ModelCreator.uvSidebar);
+				ModelCreator.setSidebar(ModelCreator.uvSidebar);
 			}
 			else
 			{
-				creator.setSidebar(null);
+				ModelCreator.setSidebar(null);
 			}
 		});
 		add(tabbedPane);
@@ -241,13 +241,13 @@ public class SidebarPanel extends JPanel implements ElementManager
 	@Override
 	public void addPendingTexture(PendingTexture texture)
 	{
-		creator.pendingTextures.add(texture);
+		ModelCreator.pendingTextures.add(texture);
 	}
 
-	public ModelCreator getCreator()
-	{
-		return creator;
-	}
+//	public ModelCreator getCreator()
+//	{
+//		return creator;
+//	}
 
 	@Override
 	public boolean getAmbientOcc()
