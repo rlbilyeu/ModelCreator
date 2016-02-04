@@ -131,6 +131,7 @@ public class WelcomeDialog
 	private static JDialog getWelcomeDialog(JFrame parent, JPanel dialogContent)
 	{
 		JDialog dialog = new JDialog(parent, "Welcome", false);
+		dialog.setName("Welcome");
 		dialog.setResizable(false);
 		dialog.setPreferredSize(new Dimension(500, 290));
 		dialog.add(dialogContent);
