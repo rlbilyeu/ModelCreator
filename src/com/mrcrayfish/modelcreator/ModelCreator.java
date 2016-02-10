@@ -214,7 +214,7 @@ public class ModelCreator
 		{
 			Display.create();
 
-			WelcomeDialog.show(frame, stickerUrl);
+			WelcomeDialog.show(frame);
 
 			loop(frame);
 

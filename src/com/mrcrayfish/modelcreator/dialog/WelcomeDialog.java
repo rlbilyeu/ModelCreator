@@ -1,9 +1,6 @@
 package com.mrcrayfish.modelcreator.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
@@ -23,24 +20,19 @@ import com.mrcrayfish.modelcreator.Icons;
 public class WelcomeDialog
 {
 
-	public static void show(JFrame parent, URL stickerUrl)
+	public static void show(JFrame parentFrame)
 	{
-		JPanel dialogContent = getDialogContent(parent, stickerUrl);
-		JDialog welcomeDialog = getWelcomeDialog(parent, dialogContent);
+		JPanel dialogContent = getDialogContent();
+		JDialog welcomeDialog = getWelcomeDialog(parentFrame, dialogContent);
 		showDialog(welcomeDialog);
 	}
 
-	private static JPanel getDialogContent(JFrame parent, URL stickerUrl)
+	private static JPanel getDialogContent()
 	{
 		JPanel container = new JPanel(new BorderLayout(20, 10));
 		container.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-// 		stickerUrl = parent.getClass().getClassLoader().getResource("sticker.png");
-		if (stickerUrl != null)
-		{
-			ImageIcon crayfish = new ImageIcon(stickerUrl);
-			container.add(new JLabel(crayfish), BorderLayout.EAST);
-		}
+		applySticker(container);
 
 		JPanel leftPanel = getLeftPanel();
 		container.add(leftPanel, BorderLayout.CENTER);
@@ -48,6 +40,16 @@ public class WelcomeDialog
 		JPanel btnGrid = getButtonGrid();
 		container.add(btnGrid, BorderLayout.SOUTH);
 		return container;
+	}
+
+	private static void applySticker(JPanel container)
+	{
+		Image stickerImage = Toolkit.getDefaultToolkit().getImage("res/sticker.png");
+		if (stickerImage != null)
+		{
+			ImageIcon crayfish = new ImageIcon(stickerImage);
+			container.add(new JLabel(crayfish), BorderLayout.EAST);
+		}
 	}
 
 	private static JPanel getLeftPanel()
@@ -90,6 +92,8 @@ public class WelcomeDialog
 		JPanel btnGrid = new JPanel(new GridLayout(1, 4, 5, 0));
 		JButton btnDonate = new JButton("Donate");
 		btnDonate.setIcon(Icons.coin);
+
+//		btnDonate.setIcon(Icons.coin);
 		btnDonate.addActionListener(a ->
 				openUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HVXLDWFN4MNA2"));
 		btnGrid.add(btnDonate);
@@ -131,6 +135,7 @@ public class WelcomeDialog
 	private static JDialog getWelcomeDialog(JFrame parent, JPanel dialogContent)
 	{
 		JDialog dialog = new JDialog(parent, "Welcome", false);
+		dialog.setName("Welcome");
 		dialog.setResizable(false);
 		dialog.setPreferredSize(new Dimension(500, 290));
 		dialog.add(dialogContent);
