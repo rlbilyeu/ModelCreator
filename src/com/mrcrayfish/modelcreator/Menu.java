@@ -2,10 +2,20 @@ package com.mrcrayfish.modelcreator;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.HashMap;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.mrcrayfish.modelcreator.element.ElementManager;
@@ -13,137 +23,61 @@ import com.mrcrayfish.modelcreator.screenshot.PendingScreenshot;
 import com.mrcrayfish.modelcreator.screenshot.Screenshot;
 import com.mrcrayfish.modelcreator.screenshot.ScreenshotCallback;
 import com.mrcrayfish.modelcreator.screenshot.Uploader;
-import com.mrcrayfish.modelcreator.sidebar.Sidebar;
 import com.mrcrayfish.modelcreator.util.Util;
-import com.sun.tools.internal.ws.processor.model.Model;
 
 public class Menu extends JMenuBar
 {
 	private static final long serialVersionUID = 1L;
+	static HashMap<String, Icon> iconsMap = IconMap.invoke();
+
 
 	private JFrame creator;
+	private ElementManager manager;
 
-	/* File */
-	private JMenu menuFile;
-	private JMenuItem itemNew;
-	private JMenuItem itemLoad;
-	private JMenuItem itemSave;
-	private JMenuItem itemImport;
-	private JMenuItem itemExport;
-	private JMenuItem itemTexturePath;
-	private JMenuItem itemExit;
-
-	/* Options */
-	private JMenu menuOptions;
-	private JMenuItem itemTransparency;
-
-	/* Share */
-	private JMenu menuScreenshot;
-	private JMenuItem itemSaveToDisk;
-	private JMenuItem itemShareFacebook;
-	private JMenuItem itemShareTwitter;
-	private JMenuItem itemShareReddit;
-	private JMenuItem itemImgurLink;
-
-	/* Extras */
-	private JMenu menuHelp;
-	private JMenu menuExamples;
-	private JMenuItem itemModelCauldron;
-	private JMenuItem itemModelChair;
-	private JMenuItem itemDonate;
-	private JMenuItem itemPM;
-	private JMenuItem itemMF;
-	private JMenuItem itemGitHub;
 
 	public Menu(JFrame creator, ElementManager manager)
 	{
 		this.creator = creator;
-		initMenu(manager);
-	}
+		this.manager = manager;
 
-	private void initMenu(ElementManager manager)
-	{
-		menuFile = new JMenu("File");
-		{
-			itemNew = createItem("New", "New Model", KeyEvent.VK_N, new ImageIcon(getClass().getClassLoader().getResource("icons/new.png")));
-			itemLoad = createItem("Load Project...", "Load Project from File", KeyEvent.VK_S, Icons.load);
-			itemSave = createItem("Save Project...", "Save Project to File", KeyEvent.VK_S, Icons.disk);
-			itemImport = createItem("Import JSON...", "Import Model from JSON", KeyEvent.VK_I, new ImageIcon(getClass().getClassLoader().getResource("icons/import.png")));
-			itemExport = createItem("Export JSON...", "Export Model to JSON", KeyEvent.VK_E, new ImageIcon(getClass().getClassLoader().getResource("icons/export.png")));
-			itemTexturePath = createItem("Set Texture Path...", "Set the base path to look for textures", KeyEvent.VK_S, new ImageIcon(getClass().getClassLoader().getResource("icons/texture.png")));
-			itemExit = createItem("Exit", "Exit Application", KeyEvent.VK_E, new ImageIcon(getClass().getClassLoader().getResource("icons/exit.png")));
-		}
-
-		menuOptions = new JMenu("Options");
-		{
-			itemTransparency = createItem("Toggle Transparency", "Enables transparent rendering in program", KeyEvent.VK_E, Icons.transparent);
-		}
-
-		menuScreenshot = new JMenu("Screenshot");
-		{
-			itemSaveToDisk = createItem("Save to Disk...", "Save screenshot to disk.", KeyEvent.VK_S, Icons.disk);
-			itemShareFacebook = createItem("Share to Facebook", "Share a screenshot of your model Facebook.", KeyEvent.VK_S, Icons.facebook);
-			itemShareTwitter = createItem("Share to Twitter", "Share a screenshot of your model to Twitter.", KeyEvent.VK_S, Icons.twitter);
-			itemShareReddit = createItem("Share to Minecraft Subreddit", "Share a screenshot of your model to Minecraft Reddit.", KeyEvent.VK_S, Icons.reddit);
-			itemImgurLink = createItem("Get Imgur Link", "Get an Imgur link of your screenshot to share.", KeyEvent.VK_G, Icons.imgur);
-		}
-
-		menuHelp = new JMenu("More");
-		{
-			menuExamples = new JMenu("Examples");
-			menuExamples.setIcon(Icons.new_);
-			{
-				itemModelCauldron = createItem("Cauldron", "<html>Model by MrCrayfish<br><b>Private use only</b></html>", KeyEvent.VK_C, Icons.model_cauldron);
-				itemModelChair = createItem("Chair", "<html>Model by MrCrayfish<br><b>Private use only</b></html>", KeyEvent.VK_C, Icons.model_chair);
-			}
-			itemDonate = createItem("Donate (PayPal)", "Donate to MrCrayfish", KeyEvent.VK_D, Icons.coin);
-			itemPM = createItem("Planet Minecraft", "Open PMC Post", KeyEvent.VK_P, Icons.planet_minecraft);
-			itemMF = createItem("Minecraft Forum", "Open MF Post", KeyEvent.VK_M, Icons.minecraft_forum);
-			itemGitHub = createItem("Github", "View Source Code", KeyEvent.VK_G, Icons.github);
-		}
-
-		initActions(manager);
-
-		menuExamples.add(itemModelCauldron);
-		menuExamples.add(itemModelChair);
-
-		menuHelp.add(menuExamples);
-		menuHelp.addSeparator();
-		menuHelp.add(itemPM);
-		menuHelp.add(itemMF);
-		menuHelp.add(itemGitHub);
-		menuHelp.addSeparator();
-		menuHelp.add(itemDonate);
-
-		menuOptions.add(itemTransparency);
-
-		menuScreenshot.add(itemSaveToDisk);
-		menuScreenshot.add(itemShareFacebook);
-		menuScreenshot.add(itemShareTwitter);
-		menuScreenshot.add(itemShareReddit);
-		menuScreenshot.add(itemImgurLink);
-
-		menuFile.add(itemNew);
-		menuFile.addSeparator();
-		menuFile.add(itemLoad);
-		menuFile.add(itemSave);
-		menuFile.addSeparator();
-		menuFile.add(itemImport);
-		menuFile.add(itemExport);
-		menuFile.addSeparator();
-		menuFile.add(itemTexturePath);
-		menuFile.addSeparator();
-		menuFile.add(itemExit);
-
+		JMenu menuFile = initFileMenu();
 		add(menuFile);
+
+		JMenu menuOptions = initOptionsMenu();
 		add(menuOptions);
+
+		JMenu menuScreenshot = initScreenshotMenu();
 		add(menuScreenshot);
+
+		JMenu menuHelp = initHelpMenu();
 		add(menuHelp);
 	}
 
-	private void initActions(ElementManager manager)
-	{
-		itemNew.addActionListener(a ->
+	private JMenu initFileMenu() {
+		JMenu menu = new JMenu("File");
+		{
+			menu.add( menuItemNew() );
+			menu.addSeparator();
+
+			menu.add( menuItemLoad() );
+			menu.add( menuItemSave() );
+			menu.addSeparator();
+
+			menu.add( menuItemImport());
+			menu.add( menuItemExport());
+			menu.addSeparator();
+
+			menu.add( menuItemTexturePath() );
+			menu.addSeparator();
+
+			menu.add( menuItemExit() );
+		}
+		return menu;
+	}
+
+	private JMenuItem menuItemNew() {
+		JMenuItem item = createItem("New", "New Model", KeyEvent.VK_N, iconsMap.get("new"));
+		item.addActionListener((ActionEvent newModelCreation) ->
 		{
 			int returnVal = JOptionPane.showConfirmDialog(creator, "You current work will be cleared, are you sure?", "Note", JOptionPane.YES_NO_OPTION);
 			if (returnVal == JOptionPane.YES_OPTION)
@@ -152,8 +86,12 @@ public class Menu extends JMenuBar
 				manager.updateValues();
 			}
 		});
+		return item;
+	}
 
-		itemLoad.addActionListener(a ->
+	private JMenuItem menuItemLoad() {
+		JMenuItem item = createItem("Load Project...", "Load Project from File", KeyEvent.VK_S, iconsMap.get("load"));
+		item.addActionListener(a ->
 		{
 			JFileChooser chooser = new JFileChooser();
 			chooser.setDialogTitle("Output Directory");
@@ -176,8 +114,12 @@ public class Menu extends JMenuBar
 				}
 			}
 		});
+		return item;
+	}
 
-		itemSave.addActionListener(a ->
+	private JMenuItem menuItemSave() {
+		JMenuItem item = createItem("Save Project...", "Save Project to File", KeyEvent.VK_S, iconsMap.get("disk"));
+		item.addActionListener(a ->
 		{
 			JFileChooser chooser = new JFileChooser();
 			chooser.setDialogTitle("Output Directory");
@@ -203,8 +145,12 @@ public class Menu extends JMenuBar
 				}
 			}
 		});
+		return item;
+	}
 
-		itemImport.addActionListener(e ->
+	private JMenuItem menuItemImport() {
+		JMenuItem item = createItem("Import JSON...", "Import Model from JSON", KeyEvent.VK_I, iconsMap.get("import"));
+		item.addActionListener(e ->
 		{
 			JFileChooser chooser = new JFileChooser();
 			chooser.setDialogTitle("Input File");
@@ -229,8 +175,12 @@ public class Menu extends JMenuBar
 				manager.updateValues();
 			}
 		});
+		return item;
+	}
 
-		itemExport.addActionListener(e ->
+	private JMenuItem menuItemExport() {
+		JMenuItem item = createItem("Export JSON...", "Export Model to JSON", KeyEvent.VK_E, iconsMap.get("export"));
+		item.addActionListener(e ->
 		{
 			JFileChooser chooser = new JFileChooser();
 			chooser.setDialogTitle("Output Directory");
@@ -257,8 +207,12 @@ public class Menu extends JMenuBar
 				}
 			}
 		});
+		return item;
+	}
 
-		itemTexturePath.addActionListener(e ->
+	private JMenuItem menuItemTexturePath() {
+		JMenuItem item = createItem("Set Texture Path...", "Set the base path to look for textures", KeyEvent.VK_S, iconsMap.get("texture"));
+		item.addActionListener(e ->
 		{
 			JFileChooser chooser = new JFileChooser();
 			chooser.setDialogTitle("Texture Path");
@@ -269,21 +223,58 @@ public class Menu extends JMenuBar
 				ModelCreator.texturePath = chooser.getSelectedFile().getAbsolutePath();
 			}
 		});
+		return item;
+	}
 
-		itemExit.addActionListener(e ->
+	private JMenuItem menuItemExit() {
+		JMenuItem item = createItem("Exit", "Exit Application", KeyEvent.VK_E, iconsMap.get("exit"));
+		item.addActionListener(e ->
 		{
 			creator.dispose();
 //			creator.close();
 		});
+		return item;
+	}
 
-		itemTransparency.addActionListener(a ->
+
+
+	private JMenu initOptionsMenu() {
+		JMenu menu = new JMenu("Options");
+		{
+			menu.add( menuItemTransparency() );
+		}
+		return menu;
+	}
+
+	private JMenuItem menuItemTransparency() {
+		JMenuItem item = createItem("Toggle Transparency", "Enables transparent rendering in program", KeyEvent.VK_E, iconsMap.get("transparent"));
+		item.addActionListener(a ->
 		{
 			ModelCreator.transparent ^= true;
 			if (ModelCreator.transparent)
 				JOptionPane.showMessageDialog(null, "<html>Transparent textures do not represent the same as in Minecraft.<br> " + "It depends if the model you are overwriting, allows transparent<br>" + "textures in the code. Blocks like Grass and Stone don't allow<br>" + "transparency, where as Glass and Cauldron do. Please take this into<br>" + "consideration when designing. Transparency is now turned on.<html>", "Rendering Warning", JOptionPane.INFORMATION_MESSAGE);
 		});
+		return item;
+	}
 
-		itemSaveToDisk.addActionListener(a ->
+
+
+	private JMenu initScreenshotMenu() {
+		JMenu menu;
+		menu = new JMenu("Screenshot");
+		{
+			menu.add(menuItemSaveToDisk());
+			menu.add(menuItemFacebook() );
+			menu.add(menuItemSaveToTwitter());
+			menu.add(menuItemSaveToReddit());
+			menu.add(menuItemSaveToImgur() );
+		}
+		return menu;
+	}
+
+	private JMenuItem menuItemSaveToDisk() {
+		JMenuItem item = createItem("Save to Disk...", "Save screenshot to disk.", KeyEvent.VK_S, iconsMap.get("disk"));
+		item.addActionListener(a ->
 		{
 			JFileChooser chooser = new JFileChooser();
 			chooser.setDialogTitle("Output Directory");
@@ -310,8 +301,12 @@ public class Menu extends JMenuBar
 				}
 			}
 		});
+		return item;
+	}
 
-		itemShareFacebook.addActionListener(a ->
+	private JMenuItem menuItemFacebook() {
+		JMenuItem item = createItem("Share to Facebook", "Share a screenshot of your model Facebook.", KeyEvent.VK_S, iconsMap.get("facebook"));
+		item.addActionListener(a ->
 		{
 			ModelCreator.setSidebar(null);
 			ModelCreator.startScreenshot(new PendingScreenshot(null, new ScreenshotCallback()
@@ -331,8 +326,12 @@ public class Menu extends JMenuBar
 				}
 			}));
 		});
+		return item;
+	}
 
-		itemShareTwitter.addActionListener(a ->
+	private JMenuItem menuItemSaveToTwitter() {
+		JMenuItem item = createItem("Share to Twitter", "Share a screenshot of your model to Twitter.", KeyEvent.VK_S, iconsMap.get("twitter"));
+		item.addActionListener(a ->
 		{
 			ModelCreator.setSidebar(null);
 			ModelCreator.startScreenshot(new PendingScreenshot(null, new ScreenshotCallback()
@@ -352,8 +351,12 @@ public class Menu extends JMenuBar
 				}
 			}));
 		});
+		return item;
+	}
 
-		itemShareReddit.addActionListener(a ->
+	private JMenuItem menuItemSaveToReddit() {
+		JMenuItem item = createItem("Share to Minecraft Subreddit", "Share a screenshot of your model to Minecraft Reddit.", KeyEvent.VK_S, iconsMap.get("reddit"));
+		item.addActionListener(a ->
 		{
 			ModelCreator.setSidebar(null);
 			ModelCreator.startScreenshot(new PendingScreenshot(null, new ScreenshotCallback()
@@ -373,8 +376,12 @@ public class Menu extends JMenuBar
 				}
 			}));
 		});
+		return item;
+	}
 
-		itemImgurLink.addActionListener(a ->
+	private JMenuItem menuItemSaveToImgur() {
+		JMenuItem item = createItem("Get Imgur Link", "Get an Imgur link of your screenshot to share.", KeyEvent.VK_G, iconsMap.get("imgur"));
+		item.addActionListener(a ->
 		{
 			ModelCreator.setSidebar(null);
 			ModelCreator.startScreenshot(new PendingScreenshot(null, new ScreenshotCallback()
@@ -421,37 +428,91 @@ public class Menu extends JMenuBar
 				}
 			}));
 		});
+		return item;
+	}
 
-		itemMF.addActionListener(a ->
+
+
+	private JMenu initHelpMenu() {
+		JMenu menuHelp;
+		menuHelp = new JMenu("More");
 		{
-			JOptionPane.showMessageDialog(null, "This option has not been added yet. Please wait until the next preview.");
-		});
+			menuHelp.add(menuExamples());
+			menuHelp.addSeparator();
 
-		itemPM.addActionListener(a ->
+			menuHelp.add(menuItemPM());
+			menuHelp.add(menuItemMF());
+			menuHelp.add(menuItemGitHub());
+			menuHelp.addSeparator();
+			menuHelp.add(menuItemDonate());
+		}
+		return menuHelp;
+	}
+
+	private JMenu menuExamples() {
+		JMenu menu = new JMenu("Examples");
+		menu.setIcon(iconsMap.get("new_"));
 		{
-			JOptionPane.showMessageDialog(null, "This option has not been added yet. Please wait until the next preview.");
-		});
+			menu.add(modelItemCauldron());
+			menu.add(modelItemChair());
+		}
+		return menu;
+	}
 
-		itemGitHub.addActionListener(a ->
-		{
-			Util.openUrl("https://github.com/MrCrayfish/ModelCreator");
-		});
-
-		itemDonate.addActionListener(a ->
-		{
-			Util.openUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HVXLDWFN4MNA2");
-		});
-
-		itemModelCauldron.addActionListener(a ->
+	private JMenuItem modelItemCauldron() {
+		JMenuItem item = createItem("Cauldron", "<html>Model by MrCrayfish<br><b>Private use only</b></html>", KeyEvent.VK_C, iconsMap.get("model_cauldron"));
+		item.addActionListener(a ->
 		{
 			Util.loadModelFromJar(manager, getClass(), "models/cauldron");
 		});
+		return item;
+	}
 
-		itemModelChair.addActionListener(a ->
+	private JMenuItem modelItemChair() {
+		JMenuItem item = createItem("Chair", "<html>Model by MrCrayfish<br><b>Private use only</b></html>", KeyEvent.VK_C, iconsMap.get("model_chair"));
+		item.addActionListener(a ->
 		{
 			Util.loadModelFromJar(manager, getClass(), "models/modern_chair");
 		});
+		return item;
 	}
+
+	private JMenuItem menuItemPM() {
+		JMenuItem item = createItem("Planet Minecraft", "Open PMC Post", KeyEvent.VK_P, iconsMap.get("planet_minecraft"));
+		item.addActionListener(a ->
+		{
+			JOptionPane.showMessageDialog(null, "This option has not been added yet. Please wait until the next preview.");
+		});
+		return item;
+	}
+
+	private JMenuItem menuItemMF() {
+		JMenuItem item = createItem("Minecraft Forum", "Open MF Post", KeyEvent.VK_M, iconsMap.get("minecraft_forum"));
+		item.addActionListener(a ->
+		{
+			JOptionPane.showMessageDialog(null, "This option has not been added yet. Please wait until the next preview.");
+		});
+		return item;
+	}
+
+	private JMenuItem menuItemGitHub() {
+		JMenuItem item = createItem("Github", "View Source Code", KeyEvent.VK_G, iconsMap.get("github"));
+		item.addActionListener(a ->
+		{
+			Util.openUrl("https://github.com/MrCrayfish/ModelCreator");
+		});
+		return item;
+	}
+
+	private JMenuItem menuItemDonate() {
+		JMenuItem item = createItem("Donate (PayPal)", "Donate to MrCrayfish", KeyEvent.VK_D, iconsMap.get("coin"));
+		item.addActionListener(a ->
+		{
+			Util.openUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HVXLDWFN4MNA2");
+		});
+		return item;
+	}
+
 
 	private JMenuItem createItem(String name, String tooltip, int mnemonic, Icon icon)
 	{

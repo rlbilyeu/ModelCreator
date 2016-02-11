@@ -1,46 +1,32 @@
 package com.mrcrayfish.modelcreator.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import com.mrcrayfish.modelcreator.IconMap;
+
+import java.awt.*;
 import java.net.URL;
+import java.util.HashMap;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
-import com.mrcrayfish.modelcreator.Icons;
 
 public class WelcomeDialog
 {
+	static HashMap<String, Icon> iconsMap = IconMap.invoke();
 
-	public static void show(JFrame parent, URL stickerUrl)
+
+	public static void show(JFrame parentFrame)
 	{
-		JPanel dialogContent = getDialogContent(parent, stickerUrl);
-		JDialog welcomeDialog = getWelcomeDialog(parent, dialogContent);
+		JPanel dialogContent = getDialogContent();
+		JDialog welcomeDialog = getWelcomeDialog(parentFrame, dialogContent);
 		showDialog(welcomeDialog);
 	}
 
-	private static JPanel getDialogContent(JFrame parent, URL stickerUrl)
+	private static JPanel getDialogContent()
 	{
 		JPanel container = new JPanel(new BorderLayout(20, 10));
 		container.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-// 		stickerUrl = parent.getClass().getClassLoader().getResource("sticker.png");
-		if (stickerUrl != null)
-		{
-			ImageIcon crayfish = new ImageIcon(stickerUrl);
-			container.add(new JLabel(crayfish), BorderLayout.EAST);
-		}
+		applySticker(container);
 
 		JPanel leftPanel = getLeftPanel();
 		container.add(leftPanel, BorderLayout.CENTER);
@@ -48,6 +34,12 @@ public class WelcomeDialog
 		JPanel btnGrid = getButtonGrid();
 		container.add(btnGrid, BorderLayout.SOUTH);
 		return container;
+	}
+
+	private static void applySticker(JPanel container)
+	{
+		ImageIcon crayfishImage = (ImageIcon) iconsMap.get("sticker");
+		container.add(new JLabel(crayfishImage), BorderLayout.EAST);
 	}
 
 	private static JPanel getLeftPanel()
@@ -88,19 +80,20 @@ public class WelcomeDialog
 	private static JPanel getButtonGrid()
 	{
 		JPanel btnGrid = new JPanel(new GridLayout(1, 4, 5, 0));
+
 		JButton btnDonate = new JButton("Donate");
-		btnDonate.setIcon(Icons.coin);
+		btnDonate.setIcon(iconsMap.get("coin"));
 		btnDonate.addActionListener(a ->
 				openUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=HVXLDWFN4MNA2"));
 		btnGrid.add(btnDonate);
 
 		JButton btnTwitter = new JButton("Twitter");
-		btnTwitter.setIcon(Icons.twitter);
-		btnTwitter.addActionListener(arg0 -> openUrl("https://www.twitter.com/MrCraayfish"));
+		btnTwitter.setIcon(iconsMap.get("twitter"));
+		btnTwitter.addActionListener(a -> openUrl("https://www.twitter.com/MrCraayfish"));
 		btnGrid.add(btnTwitter);
 
 		JButton btnFacebook = new JButton("Facebook");
-		btnFacebook.setIcon(Icons.facebook);
+		btnFacebook.setIcon(iconsMap.get("facebook"));
 		btnFacebook.addActionListener(a ->
 				openUrl("https://www.facebook.com/MrCrayfish"));
 		btnGrid.add(btnFacebook);
