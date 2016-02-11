@@ -240,14 +240,6 @@ public class ModelCreator
 	public static void initComponents(JFrame frame)
 	{
 		Icons.init(ModelCreator.class);
-		setupMenuBar(frame);
-
-		canvas.setPreferredSize(new Dimension(1000, 790));
-		frame.add(canvas, BorderLayout.CENTER);
-
-		canvas.setFocusable(true);
-		canvas.setVisible(true);
-		canvas.requestFocus();
 
 		manager = new SidebarPanel(frame);
 		scroll = new JScrollPane((JPanel) manager);
@@ -255,6 +247,15 @@ public class ModelCreator
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		frame.add(scroll, BorderLayout.EAST);
+
+ 		canvas.setPreferredSize(new Dimension(1000, 790));
+		frame.add(canvas, BorderLayout.CENTER);
+
+		canvas.setFocusable(true);
+		canvas.setVisible(true);
+		canvas.requestFocus();
+
+		setupMenuBar(frame, manager);
 	}
 
 	private static List<Image> getIcons()
@@ -267,7 +268,7 @@ public class ModelCreator
 		return icons;
 	}
 
-	private static void setupMenuBar(JFrame frame)
+	private static void setupMenuBar(JFrame frame, ElementManager manager)
 	{
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 		frame.setJMenuBar(new Menu(frame, manager));
